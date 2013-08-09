@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.fcrepo.binary;
+package org.fcrepo.storage.policy;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
@@ -28,6 +28,9 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Session;
 
+import org.fcrepo.storage.policy.MimeTypePolicy;
+import org.fcrepo.storage.policy.Policy;
+import org.fcrepo.storage.policy.PolicyDecisionPoint;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

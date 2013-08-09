@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.fcrepo.binary;
+package org.fcrepo.storage.policy;
 
+import org.fcrepo.storage.policy.MimeTypePolicy;
+import org.fcrepo.storage.policy.Policy;
 import org.junit.Test;
 import javax.jcr.Node;
 import javax.jcr.Property;

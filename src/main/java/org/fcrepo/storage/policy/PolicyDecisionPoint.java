@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.fcrepo.binary;
+package org.fcrepo.storage.policy;
 
 import javax.jcr.Node;
 import java.util.ArrayList;
