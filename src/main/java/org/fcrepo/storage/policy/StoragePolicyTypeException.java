@@ -21,11 +21,11 @@ package org.fcrepo.storage.policy;
  * (where other exceptions are not adequate).
  */
 
-public class PolicyTypeException extends RuntimeException {
+public class StoragePolicyTypeException extends RuntimeException {
     /**
      * @param arg0
      */
-    public PolicyTypeException(final String arg0) {
+    public StoragePolicyTypeException(final String arg0) {
         super(arg0);
     }
 
