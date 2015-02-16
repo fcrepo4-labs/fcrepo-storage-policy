@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 DuraSpace, Inc.
+ * Copyright 2015 DuraSpace, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import org.fcrepo.kernel.FedoraBinary;
 import org.fcrepo.kernel.impl.rdf.impl.DefaultIdentifierTranslator;
 import org.fcrepo.kernel.impl.services.BinaryServiceImpl;
-import org.fcrepo.kernel.services.BinaryService;
-import org.fcrepo.kernel.services.ObjectService;
-import org.fcrepo.kernel.impl.services.ObjectServiceImpl;
+import org.fcrepo.kernel.impl.services.ContainerServiceImpl;
 import org.fcrepo.kernel.impl.services.functions.GetBinaryKey;
+import org.fcrepo.kernel.models.FedoraBinary;
+import org.fcrepo.kernel.services.BinaryService;
+import org.fcrepo.kernel.services.ContainerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.modeshape.jcr.JcrRepositoryFactory;
@@ -59,7 +59,7 @@ public class TiffStoragePolicyStorageIT {
 
     private BinaryService binaryService;
 
-    private ObjectService objectService;
+    private ContainerService containerService;
 
     private StoragePolicyDecisionPointImpl pdp;
 
@@ -85,7 +85,7 @@ public class TiffStoragePolicyStorageIT {
         pdp.add(new MimeTypeStoragePolicy("image/tiff", "tiff-store"));
 
         binaryService = new BinaryServiceImpl();
-        objectService = new ObjectServiceImpl();
+        containerService = new ContainerServiceImpl();
     }
 
     @Test
@@ -95,13 +95,13 @@ public class TiffStoragePolicyStorageIT {
 
         final DefaultIdentifierTranslator subjects = new DefaultIdentifierTranslator(session);
 
-        objectService.findOrCreateObject(session, "/testCompositeObject");
+        containerService.findOrCreate(session, "/testCompositeObject");
 
         data = new ByteArrayInputStream(
                 ("987654321987654321098765432109876543210987654321098765432109876543210987654" +
                         "3210987654321009876543210").getBytes());
 
-        final FedoraBinary binary = binaryService.findOrCreateBinary(session,
+        final FedoraBinary binary = binaryService.findOrCreate(session,
                 "/testCompositeObject/content");
 
         binary.setContent(data, "application/octet-stream", null, null, pdp);
@@ -112,7 +112,7 @@ public class TiffStoragePolicyStorageIT {
                         "17b71c8a701687acec17cd9dcd20a716cc2cf67417b71c8a701687acec17cd9dcd20a7" +
                         "16cc2cf67417b71c8a701687acec17cd9dcd20a716cc2cf67417b71c8a7016")
                         .getBytes());
-        final FedoraBinary datastream1 = binaryService.findOrCreateBinary(session,
+        final FedoraBinary datastream1 = binaryService.findOrCreate(session,
                 "/testCompositeObject/tiffContent");
 
         datastream1.setContent(data, "image/tiff", null, null, pdp);
@@ -134,7 +134,7 @@ public class TiffStoragePolicyStorageIT {
 
         logger.info("tiff key: {}", tiffKey);
 
-        final FedoraBinary normalBinary = binaryService.asBinary(node);
+        final FedoraBinary normalBinary = binaryService.cast(node);
 
         Model fixity = normalBinary.getFixity(subjects).asModel();
 
@@ -144,7 +144,7 @@ public class TiffStoragePolicyStorageIT {
 
         assertThat(contentLocation, containsString(key.toString()));
 
-        final FedoraBinary tiffBinary = binaryService.asBinary(tiffNode);
+        final FedoraBinary tiffBinary = binaryService.cast(tiffNode);
 
         fixity = tiffBinary.getFixity(subjects).asModel();
 
