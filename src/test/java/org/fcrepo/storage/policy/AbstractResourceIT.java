@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 DuraSpace, Inc.
+ * Copyright 2015 DuraSpace, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public abstract class AbstractResourceIT {
         logger = getLogger(this.getClass());
     }
 
-    protected static final int SERVER_PORT = parseInt(getProperty("test.port", "8080"));
+    protected static final int SERVER_PORT = parseInt(getProperty("fcrepo.dynamic.test.port", "8080"));
 
     protected static final String HOSTNAME = "localhost";
 

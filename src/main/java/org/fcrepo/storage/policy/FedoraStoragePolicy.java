@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 DuraSpace, Inc.
+ * Copyright 2015 DuraSpace, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.http.commons.AbstractResource;
-import org.fcrepo.kernel.FedoraResource;
+import org.fcrepo.kernel.models.FedoraResource;
+import org.fcrepo.kernel.services.ContainerService;
 import org.fcrepo.kernel.services.policy.StoragePolicy;
 import org.fcrepo.kernel.services.policy.StoragePolicyDecisionPoint;
 import org.modeshape.jcr.api.JcrTools;
@@ -80,6 +81,9 @@ public class FedoraStoragePolicy extends AbstractResource {
     @Inject
     protected StoragePolicyDecisionPoint storagePolicyDecisionPoint;
 
+    @Inject
+    protected ContainerService containerService;
+
     private JcrTools jcrTools;
 
     public static final String POLICY_RESOURCE = "policies";
@@ -99,7 +103,7 @@ public class FedoraStoragePolicy extends AbstractResource {
             // we create a FedoraResource to initialize the storage of policies
             @SuppressWarnings("unused")
             final FedoraResource initializer
-                    = objectService.findOrCreateObject(internalSession, FEDORA_STORAGE_POLICY_PATH);
+                    = containerService.findOrCreate(internalSession, FEDORA_STORAGE_POLICY_PATH);
             internalSession.save();
             LOGGER.debug("Created configuration node");
         } finally {
