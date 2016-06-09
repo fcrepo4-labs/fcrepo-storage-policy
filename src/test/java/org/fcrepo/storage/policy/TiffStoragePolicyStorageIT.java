@@ -31,13 +31,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import org.fcrepo.kernel.impl.rdf.impl.DefaultIdentifierTranslator;
-import org.fcrepo.kernel.impl.services.BinaryServiceImpl;
-import org.fcrepo.kernel.impl.services.ContainerServiceImpl;
-import org.fcrepo.kernel.impl.services.functions.GetBinaryKey;
-import org.fcrepo.kernel.models.FedoraBinary;
-import org.fcrepo.kernel.services.BinaryService;
-import org.fcrepo.kernel.services.ContainerService;
+import org.fcrepo.kernel.modeshape.rdf.impl.DefaultIdentifierTranslator;
+import org.fcrepo.kernel.modeshape.services.BinaryServiceImpl;
+import org.fcrepo.kernel.modeshape.services.ContainerServiceImpl;
+import org.fcrepo.kernel.api.models.FedoraBinary;
+import org.fcrepo.kernel.api.services.BinaryService;
+import org.fcrepo.kernel.api.services.ContainerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.modeshape.jcr.JcrRepositoryFactory;
@@ -62,8 +61,6 @@ public class TiffStoragePolicyStorageIT {
     private ContainerService containerService;
 
     private StoragePolicyDecisionPointImpl pdp;
-
-    GetBinaryKey getBinaryKey = new GetBinaryKey();
 
     @Before
     public void setLogger() {

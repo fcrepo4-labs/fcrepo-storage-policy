@@ -15,10 +15,11 @@
  */
 package org.fcrepo.storage.policy;
 
-import static org.modeshape.jcr.api.JcrConstants.JCR_MIME_TYPE;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import org.fcrepo.kernel.services.policy.StoragePolicy;
+import org.fcrepo.kernel.api.models.FedoraBinary;
+import org.fcrepo.kernel.api.models.FedoraResource;
+import org.fcrepo.kernel.api.services.policy.StoragePolicy;
 import org.slf4j.Logger;
 
 import javax.jcr.Node;
@@ -56,23 +57,22 @@ public class MimeTypeStoragePolicy implements StoragePolicy {
      * this policy's mime type, return the hint.
      */
     @Override
-    public String evaluatePolicy(final Node n) {
-        LOGGER.debug("Evaluating MimeTypeStoragePolicy ({} -> {}) for {} ", mimeType,
-            hint, n);
-        try {
-            final String nodeMimeType =
-                n.getProperty(JCR_MIME_TYPE).getString();
+    public String evaluatePolicy(final FedoraResource resource) {
+        LOGGER.debug("Evaluating MimeTypeStoragePolicy ({} -> {}) for {} ", mimeType, hint, resource);
 
-            LOGGER.trace("Found mime type {}", nodeMimeType);
-
-            if (nodeMimeType.equals(mimeType)) {
-                LOGGER.trace("{} matched this mime type."
-                    + "Returning hint {} ", mimeType, hint);
-                return hint;
-            }
-        } catch (final RepositoryException e) {
-            LOGGER.info("Got Exception evaluating policy: {}", e.getMessage());
+        if (!(resource instanceof FedoraBinary)) {
+            LOGGER.warn("Unable to evaluate policy on non-Binary resources! {}", resource);
             return null;
+        }
+
+        FedoraBinary binaryResource = (FedoraBinary) resource;
+        final String nodeMimeType = binaryResource.getMimeType();
+
+        LOGGER.trace("Found mime type {}", nodeMimeType);
+
+        if (nodeMimeType.equals(mimeType)) {
+            LOGGER.debug("{} matched this mime type. Returning hint {} ", mimeType, hint);
+            return hint;
         }
 
         return null;
