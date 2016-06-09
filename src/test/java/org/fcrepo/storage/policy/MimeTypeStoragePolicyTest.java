@@ -15,7 +15,8 @@
  */
 package org.fcrepo.storage.policy;
 
-import org.fcrepo.kernel.services.policy.StoragePolicy;
+import org.fcrepo.kernel.api.models.FedoraResource;
+import org.fcrepo.kernel.api.services.policy.StoragePolicy;
 import org.junit.Test;
 
 import javax.jcr.Node;
@@ -44,11 +45,11 @@ public class MimeTypeStoragePolicyTest {
 
         final Property mockProperty = mock(Property.class);
         when(mockProperty.getString()).thenReturn("image/x-dummy");
-        final Node mockContentNode = mock(Node.class);
-        when(mockContentNode.getProperty(JCR_MIME_TYPE)).thenReturn(
+        final FedoraResource mockFedoraResource = mock(FedoraResource.class);
+        when(mockFedoraResource.getProperty(JCR_MIME_TYPE)).thenReturn(
                 mockProperty);
 
-        final String receivedHint = policy.evaluatePolicy(mockContentNode);
+        final String receivedHint = policy.evaluatePolicy(mockFedoraResource);
 
         assertThat(receivedHint, is(hint));
     }
@@ -60,11 +61,11 @@ public class MimeTypeStoragePolicyTest {
 
         final Property mockProperty = mock(Property.class);
         when(mockProperty.getString()).thenReturn("application/x-other");
-        final Node mockContentNode = mock(Node.class);
-        when(mockContentNode.getProperty(JCR_MIME_TYPE)).thenReturn(
+        final FedoraResource mockFedoraResource = mock(FedoraResource.class);
+        when(mockFedoraResource.getProperty(JCR_MIME_TYPE)).thenReturn(
                 mockProperty);
 
-        final String receivedHint = policy.evaluatePolicy(mockContentNode);
+        final String receivedHint = policy.evaluatePolicy(mockFedoraResource);
 
         assertNull(receivedHint);
     }
@@ -75,12 +76,12 @@ public class MimeTypeStoragePolicyTest {
         final String hint = "store-id";
         final StoragePolicy policy = new MimeTypeStoragePolicy("image/x-dummy", hint);
 
-        final Node mockContentNode = mock(Node.class);
+        final FedoraResource mockFedoraResource = mock(FedoraResource.class);
 
-        when(mockContentNode.getProperty(JCR_MIME_TYPE)).thenThrow(
+        when(mockFedoraResource.getProperty(JCR_MIME_TYPE)).thenThrow(
                 new RepositoryException());
 
-        final String receivedHint = policy.evaluatePolicy(mockContentNode);
+        final String receivedHint = policy.evaluatePolicy(mockFedoraResource);
 
         assertNull("Received hint was not null!", receivedHint);
     }

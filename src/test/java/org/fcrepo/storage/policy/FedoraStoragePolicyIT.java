@@ -33,7 +33,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.tika.io.IOUtils;
-import org.fcrepo.kernel.services.policy.StoragePolicy;
+import org.fcrepo.kernel.api.services.policy.StoragePolicy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

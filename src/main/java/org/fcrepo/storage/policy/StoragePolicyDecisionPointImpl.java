@@ -22,8 +22,9 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.fcrepo.kernel.services.policy.StoragePolicy;
-import org.fcrepo.kernel.services.policy.StoragePolicyDecisionPoint;
+import org.fcrepo.kernel.api.models.FedoraResource;
+import org.fcrepo.kernel.api.services.policy.StoragePolicy;
+import org.fcrepo.kernel.api.services.policy.StoragePolicyDecisionPoint;
 import org.slf4j.Logger;
 
 import com.google.common.base.MoreObjects;
@@ -54,9 +55,9 @@ public class StoragePolicyDecisionPointImpl extends ArrayList<StoragePolicy> imp
      * @see org.fcrepo.kernel.services.policy.StoragePolicyDecisionPoint#evaluatePolicies(javax.jcr.Node)
      */
     @Override
-    public String evaluatePolicies(final Node n) {
+    public String evaluatePolicies(final FedoraResource resource) {
         for (final StoragePolicy p : this) {
-            final String h = p.evaluatePolicy(n);
+            final String h = p.evaluatePolicy(resource);
             if (h != null) {
                 return h;
             }
@@ -66,7 +67,7 @@ public class StoragePolicyDecisionPointImpl extends ArrayList<StoragePolicy> imp
 
     /*
      * (non-Javadoc)
-     * @see org.fcrepo.kernel.services.policy.StoragePolicyDecisionPoint#setPolicies(java.util.List)
+     * @see org.fcrepo.kernel.api.services.policy.StoragePolicyDecisionPoint#setPolicies(java.util.List)
      */
     @Override
     public void setPolicies(final List<StoragePolicy> policies) {

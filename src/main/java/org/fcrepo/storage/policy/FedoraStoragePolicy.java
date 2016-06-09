@@ -48,11 +48,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.http.commons.AbstractResource;
-import org.fcrepo.kernel.models.FedoraResource;
-import org.fcrepo.kernel.services.ContainerService;
-import org.fcrepo.kernel.services.policy.StoragePolicy;
-import org.fcrepo.kernel.services.policy.StoragePolicyDecisionPoint;
-import org.modeshape.jcr.api.JcrTools;
+import org.fcrepo.kernel.api.models.Container;
+import org.fcrepo.kernel.api.models.FedoraResource;
+import org.fcrepo.kernel.api.services.ContainerService;
+import org.fcrepo.kernel.api.services.policy.StoragePolicy;
+import org.fcrepo.kernel.api.services.policy.StoragePolicyDecisionPoint;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Scope;
 
@@ -83,8 +83,6 @@ public class FedoraStoragePolicy extends AbstractResource {
 
     @Inject
     protected ContainerService containerService;
-
-    private JcrTools jcrTools;
 
     public static final String POLICY_RESOURCE = "policies";
 
@@ -137,11 +135,11 @@ public class FedoraStoragePolicy extends AbstractResource {
 
         final String[] str = split(request); // simple split for now
         validateArgs(str.length);
-        final Node node = getJcrTools().findOrCreateNode(session,
-                FEDORA_STORAGE_POLICY_PATH, "test");
+        final Container container = containerService.findOrCreate(session,
+                FEDORA_STORAGE_POLICY_PATH + "/test");
         if (isValidNodeTypeProperty(session, str[0]) ||
                 isValidConfigurationProperty(str[0])) {
-            node.setProperty(str[0], new String[]{str[1] + ":" + str[2]});
+            container.setProperty(str[0], new String[]{str[1] + ":" + str[2]});
 
             // TODO (for now) instantiate PolicyType based on mix:mimeType
             final StoragePolicy policy = newPolicyInstance(str[0], str[1], str[2]);
@@ -198,11 +196,11 @@ public class FedoraStoragePolicy extends AbstractResource {
     public Response deleteNodeType(@PathParam("path") final String nodeType)
         throws RepositoryException {
         LOGGER.debug("Deleting node property{}", nodeType);
-        final Node node =
-                getJcrTools().findOrCreateNode(session,
-                        FEDORA_STORAGE_POLICY_PATH, "test");
+        final Container container =
+                containerService.findOrCreate(session,
+                        FEDORA_STORAGE_POLICY_PATH + "/test");
         if (isValidNodeTypeProperty(session, nodeType)) {
-            node.getProperty(nodeType).remove();
+            container.getProperty(nodeType).remove();
             session.save();
 
             // remove all MimeType intances (since thats only the stored
@@ -243,10 +241,10 @@ public class FedoraStoragePolicy extends AbstractResource {
     private Response getStoragePolicy(final String nodeType) throws RepositoryException {
         LOGGER.debug("Get storage policy for: {}", nodeType);
         Response.ResponseBuilder response;
-        final Node node =
-                getJcrTools().findOrCreateNode(session, FEDORA_STORAGE_POLICY_PATH, "test");
+        final Container container =
+                containerService.findOrCreate(session, FEDORA_STORAGE_POLICY_PATH + "/test");
 
-        final Property prop = node.getProperty(nodeType);
+        final Property prop = container.getProperty(nodeType);
         if (null == prop) {
             throw new PathNotFoundException("StoragePolicy not found: " + nodeType);
         }
@@ -314,22 +312,6 @@ public class FedoraStoragePolicy extends AbstractResource {
         private InputPattern(final int l) {
             requiredLength = l;
         }
-    }
-
-    private JcrTools getJcrTools() {
-        if (null == jcrTools) {
-            this.jcrTools = new JcrTools(true);
-        }
-        return jcrTools;
-    }
-
-    /**
-     * Only for UNIT TESTING
-     * @param jcrTools
-     */
-    @VisibleForTesting
-    public void setJcrTools(final JcrTools jcrTools) {
-        this.jcrTools = jcrTools;
     }
 
     private UriInfo getUriInfo() {
